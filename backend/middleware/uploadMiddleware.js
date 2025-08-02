@@ -30,8 +30,8 @@ const fileFilter = (req, file, cb) => {
 
 // --- Inicializa Multer  ---
 const upload = multer({
-    storage: storage, // Usa la configuración de almacenamiento definida arriba
-    fileFilter: fileFilter, // Usa el filtro de archivos definido arriba
+    storage: storage, // Usa la configuración de almacenamiento definida
+    fileFilter: fileFilter, // Usa el filtro de archivos definido 
     limits: {
         fileSize: 1024 * 1024 * 5 // Limite de tamaño de archivo
     }

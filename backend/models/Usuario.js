@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-// Define el esquema del Usuario
+// esquema del Usuario
 const usuarioSchema = new mongoose.Schema({
     nombre: {
         type: String,
@@ -26,7 +26,7 @@ const usuarioSchema = new mongoose.Schema({
         enum: ['admin', 'usuario'],
         default: 'usuario'
     },
-    // --- Nuevo campo para la foto de perfil ---
+    // --- foto de perfil ---
     fotoPerfil: {
         type: String,
         default: '/uploads/coraje_el_perro_cobardepng.webp'
@@ -39,7 +39,7 @@ const usuarioSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Middleware para hashear la contraseña
+// hashear la contraseña
 usuarioSchema.pre('save', async function(next) {
     if (!this.isModified('contrasena')) {
         return next();
@@ -49,7 +49,7 @@ usuarioSchema.pre('save', async function(next) {
     next();
 });
 
-// Instancia para Comparar Contraseñas
+// Comparar Contraseñas
 usuarioSchema.methods.compararContrasena = async function(contrasenaCandidata) {
     return await bcrypt.compare(contrasenaCandidata, this.contrasena);
 };
