@@ -3,25 +3,17 @@ const path = require('path');     // Módulo 'path' para trabajar con rutas de a
 
 // --- Configuración del almacenamiento en disco de Multer ---
 const storage = multer.diskStorage({
-    // `destination` es la carpeta donde se guardarán los archivos
-    // `cb` es el callback: null para errores, la ruta de destino como segundo argumento
     destination: (req, file, cb) => {
-        // Asegúrate de que la carpeta 'public/uploads' exista
         cb(null, 'public/uploads');
     },
-    // `filename` es el nombre que tendrá el archivo guardado
-    // Se recomienda usar un nombre único para evitar colisiones
     filename: (req, file, cb) => {
-        // Genera un nombre de archivo único usando la fecha actual y el nombre original del archivo
-        // path.extname(file.originalname) obtiene la extensión del archivo (ej. .jpg, .png)
         cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
     }
 });
 
-// --- Filtro de archivos ---
 // Esta función se usa para permitir o denegar la subida de archivos específicos
 const fileFilter = (req, file, cb) => {
-    // Tipos de archivos permitidos (ej. imágenes)
+    // Tipos de archivos permitidos 
     const filetypes = /jpeg|jpg|png|gif/;
     // Verifica la extensión del archivo
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
@@ -36,13 +28,13 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-// --- Inicializa Multer con la configuración ---
+// --- Inicializa Multer  ---
 const upload = multer({
     storage: storage, // Usa la configuración de almacenamiento definida arriba
     fileFilter: fileFilter, // Usa el filtro de archivos definido arriba
     limits: {
-        fileSize: 1024 * 1024 * 5 // Limite de tamaño de archivo: 5MB (5 * 1024 * 1024 bytes)
+        fileSize: 1024 * 1024 * 5 // Limite de tamaño de archivo
     }
 });
 
-module.exports = upload; // Exporta la instancia de Multer configurada
+module.exports = upload; 
