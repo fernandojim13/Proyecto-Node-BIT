@@ -1,10 +1,10 @@
 const Usuario = require('../models/Usuario');
 const jwt = require('jsonwebtoken');
-const path = require('path'); // Importa path para manejar rutas de archivos
-const fs = require('fs');     // Importa fs para interactuar con el sistema de archivos (para eliminar archivos antiguos)
+const path = require('path'); // path para manejar rutas de archivos
+const fs = require('fs');     // Importa fs para interactuar con el sistema de archivos
 
 
-// --- Función Auxiliar para Generar un Token JWT ---
+// --- Generar un Token JWT ---
 const generarToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE
@@ -13,9 +13,9 @@ const generarToken = (id) => {
 
 // --- Funciones del Controlador ---
 
-// @desc    Registrar un nuevo usuario
-// @route   POST /api/usuarios/registrar
-// @access  Public
+// Registrar un nuevo usuario
+// POST /api/usuarios/registrar
+// Public
 const registrarUsuario = async (req, res, next) => {
     try {
         const { nombre, correoElectronico, contrasena, rol } = req.body;
@@ -59,9 +59,9 @@ const registrarUsuario = async (req, res, next) => {
     }
 };
 
-// @desc    Iniciar sesión de usuario
-// @route   POST /api/usuarios/login
-// @access  Public
+// Iniciar sesión de usuario
+// POST /api/usuarios/login
+// acceso publico
 const iniciarSesion = async (req, res, next) => {
     try {
         const { correoElectronico, contrasena } = req.body;
@@ -91,7 +91,7 @@ const iniciarSesion = async (req, res, next) => {
                 nombre: usuario.nombre,
                 correoElectronico: usuario.correoElectronico,
                 rol: usuario.rol,
-                fotoPerfil: usuario.fotoPerfil // Incluye la foto de perfil
+                fotoPerfil: usuario.fotoPerfil // foto de perfil
             }
         });
     } catch (error) {
@@ -99,28 +99,28 @@ const iniciarSesion = async (req, res, next) => {
     }
 };
 
-// @desc    Subir foto de perfil de un usuario
-// @route   POST /api/usuarios/:id/upload-profile-picture
-// @access  Private (propio usuario o admin)
+// foto de perfil de un usuario
+// POST /api/usuarios/:id/foto de perfil
+// acceso privado
 const subirFotoPerfil = async (req, res, next) => {
     try {
         const userId = req.params.id;
 
-        // Autorización: solo el propio usuario o un admin puede subir/actualizar la foto
+        // solo el propio usuario o un admin puede subir o actualizar la foto
         if (req.usuario.rol !== 'admin' && req.usuario._id.toString() !== userId.toString()) {
             const error = new Error('No autorizado para subir la foto de perfil de otro usuario.');
             error.statusCode = 403;
             return next(error);
         }
 
-        // Verificar si se subió un archivo
+        // verificar si se subió un archivo
         if (!req.file) {
             const error = new Error('No se ha subido ningún archivo.');
             error.statusCode = 400;
             return next(error);
         }
 
-        // Buscar el usuario en la base de datos
+        // buscar el usuario en la base de datos
         const usuario = await Usuario.findById(userId);
 
         if (!usuario) {
@@ -129,7 +129,7 @@ const subirFotoPerfil = async (req, res, next) => {
             return next(error);
         }
 
-        // Opcional: Eliminar la foto de perfil antigua si no es la por defecto
+        // eliminar la foto de perfil antigua si no es la por defecto
         if (usuario.fotoPerfil && usuario.fotoPerfil !== '/uploads/default-profile.png') {
             const oldImagePath = path.join(__dirname, '..', 'public', usuario.fotoPerfil);
             fs.unlink(oldImagePath, (err) => {
@@ -137,15 +137,15 @@ const subirFotoPerfil = async (req, res, next) => {
             });
         }
 
-        // Actualizar la ruta de la foto de perfil del usuario
-        // La ruta se guarda relativa a la carpeta 'public'
+        // ruta de la foto de perfil del usuario
+        // ruta se guarda relativa a la carpeta 'public'
         usuario.fotoPerfil = `/uploads/${req.file.filename}`;
         await usuario.save(); // Guarda los cambios en la base de datos
 
         res.status(200).json({
             success: true,
             message: 'Foto de perfil subida exitosamente',
-            fotoPerfil: usuario.fotoPerfil // Envía la nueva ruta de la foto
+            fotoPerfil: usuario.fotoPerfil // nueva ruta de la foto
         });
 
     } catch (error) {
@@ -154,9 +154,9 @@ const subirFotoPerfil = async (req, res, next) => {
 };
 
 
-// @desc    Obtener todos los usuarios
-// @route   GET /api/usuarios
-// @access  Private/Admin
+// obtener todos los usuarios
+// GET /api/usuarios
+// acceso privado de asministrador
 const obtenerUsuarios = async (req, res, next) => {
     try {
         const usuarios = await Usuario.find().select('-contrasena');
@@ -170,9 +170,9 @@ const obtenerUsuarios = async (req, res, next) => {
     }
 };
 
-// @desc    Obtener un usuario por su ID
-// @route   GET /api/usuarios/:id
-// @access  Private (propio usuario o admin)
+// obtener un usuario por su ID
+// GET /api/usuarios/:id
+// accseo privado administrador 
 const obtenerUsuarioPorId = async (req, res, next) => {
     try {
         const usuario = await Usuario.findById(req.params.id).select('-contrasena');
@@ -203,9 +203,9 @@ const obtenerUsuarioPorId = async (req, res, next) => {
     }
 };
 
-// @desc    Actualizar un usuario por su ID
-// @route   PUT /api/usuarios/:id
-// @access  Private (propio usuario o admin)
+// actualizar un usuario por su ID
+// PUT /api/usuarios/:id
+// acceso privado de usuario o administrador
 const actualizarUsuario = async (req, res, next) => {
     try {
         const { nombre, correoElectronico, rol } = req.body;
@@ -261,9 +261,9 @@ const actualizarUsuario = async (req, res, next) => {
     }
 };
 
-// @desc    Eliminar un usuario por su ID
-// @route   DELETE /api/usuarios/:id
-// @access  Private/Admin
+// eliminar un usuario por su ID
+// DELETE /api/usuarios/:id
+// acceso privado de administrador 
 const eliminarUsuario = async (req, res, next) => {
     try {
         const userId = req.params.id;
@@ -276,7 +276,7 @@ const eliminarUsuario = async (req, res, next) => {
             return next(error);
         }
 
-        // Opcional: Eliminar la foto de perfil del sistema de archivos al eliminar el usuario
+        // eliminar la foto de perfil del sistema de archivos al eliminar el usuario
         if (usuarioEliminado.fotoPerfil && usuarioEliminado.fotoPerfil !== '/uploads/default-profile.png') {
             const imagePath = path.join(__dirname, '..', 'public', usuarioEliminado.fotoPerfil);
             fs.unlink(imagePath, (err) => {
@@ -302,7 +302,7 @@ const eliminarUsuario = async (req, res, next) => {
 module.exports = {
     registrarUsuario,
     iniciarSesion,
-    subirFotoPerfil, // Exporta la nueva función
+    subirFotoPerfil,
     obtenerUsuarios,
     obtenerUsuarioPorId,
     actualizarUsuario,
