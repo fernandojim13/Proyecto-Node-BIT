@@ -29,7 +29,7 @@ const usuarioSchema = new mongoose.Schema({
     // --- Nuevo campo para la foto de perfil ---
     fotoPerfil: {
         type: String,
-        default: '/uploads/default-profile.png' // Ruta por defecto si no hay foto
+        default: '/uploads/coraje_el_perro_cobardepng.webp'
     },
     fechaCreacion: {
         type: Date,
@@ -39,7 +39,7 @@ const usuarioSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Middleware de Mongoose (Pre-save Hook) para hashear la contraseña
+// Middleware para hashear la contraseña
 usuarioSchema.pre('save', async function(next) {
     if (!this.isModified('contrasena')) {
         return next();
@@ -49,7 +49,7 @@ usuarioSchema.pre('save', async function(next) {
     next();
 });
 
-// Método de Instancia para Comparar Contraseñas
+// Instancia para Comparar Contraseñas
 usuarioSchema.methods.compararContrasena = async function(contrasenaCandidata) {
     return await bcrypt.compare(contrasenaCandidata, this.contrasena);
 };
