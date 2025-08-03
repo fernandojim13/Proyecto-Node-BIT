@@ -1,16 +1,16 @@
-// Importa las dependencias necesarias
+// dependencias necesarias
 const express = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-// Importa las rutas de usuario
+// rutas de usuario
 const usuarioRoutes = require('./routes/usuarioRoutes');
 
-// Carga las variables de entorno desde el archivo .env
+// variables de entorno desde el archivo .env
 dotenv.config();
 
-// Inicializa la aplicación Express
+// aplicación Express
 const app = express();
 
 // Middleware para parsear JSON en las solicitudes
@@ -20,12 +20,9 @@ app.use(express.json());
 app.use(cors());
 
 // --- Configuración para servir archivos estáticos ---
-// Esto hace que la carpeta 'public' sea accesible desde el navegador.
-// Por ejemplo, si subes una imagen a 'public/uploads/mi_imagen.jpg',
-// podrás acceder a ella en 'http://localhost:3000/uploads/mi_imagen.jpg'
 app.use(express.static('public'));
 
-// Define un puerto para el servidor
+// puerto para el servidor
 const PORT = process.env.PORT || 3000;
 
 // --- Conexión a MongoDB ---
@@ -46,18 +43,18 @@ const connectDB = async () => {
     }
 };
 
-// Llama a la función para conectar a la base de datos
+// función para conectar a la base de datos
 connectDB();
 
 // --- Rutas de la API ---
 app.use('/api/usuarios', usuarioRoutes);
 
-// --- Endpoint Inicial (para verificar el funcionamiento) ---
+// --- Endpoint Inicial ---
 app.get('/', (req, res) => {
     res.status(200).json({ message: '¡Servidor Express funcionando correctamente!' });
 });
 
-// --- Middleware de Manejo de Errores ---
+// --- Manejo de Errores ---
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(err.statusCode || 500).json({
@@ -66,7 +63,7 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Inicia el servidor Express
+// servidor Express
 app.listen(PORT, () => {
     console.log(`Servidor Express escuchando en el puerto ${PORT}`);
     console.log(`Accede a http://localhost:${PORT} en tu navegador para verificar.`);
