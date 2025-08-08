@@ -92,3 +92,6 @@ Se ejecutan los middlewares proteger y autorizar para asegurar que solo un admin
 Se llama a eliminarUsuario.
 El controlador utiliza Usuario.findByIdAndDelete() para encontrar y eliminar el documento.
 Si el usuario se elimina correctamente, se envía una respuesta 200 OK con un mensaje de éxito.
+
+conexion a la base de datos:
+crea una base de datos en mongodb compass que se llamara: segundo_proyecto, desde la carpeta backend puedes descargar su respectiva coleccion denominada segundo_proyecto, importala para que se realice la conexion a la base de datos de este proyecto
